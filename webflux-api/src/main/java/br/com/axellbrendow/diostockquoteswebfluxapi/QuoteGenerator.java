@@ -26,16 +26,12 @@ public class QuoteGenerator {
             log.info("Starting data insertion");
             return initialQuote();
         }, (state, sink) -> {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             sink.next(state);
             return createNewQuote(state);
         })
         .delaySubscription(Duration.ofMillis(3000))
-        .subscribe();
+        .delayElements(Duration.ofMillis(1000))
+        .subscribe(log::info);
     }
 
     private Quote createNewQuote(Quote previousQuote) {
@@ -46,7 +42,6 @@ public class QuoteGenerator {
 			.timestamp(LocalDateTime.now())
 			.build();
 		repository.save(newQuote).subscribe();
-        log.info("Inserting {}", newQuote);
         return newQuote;
     }
 
@@ -58,7 +53,6 @@ public class QuoteGenerator {
             .timestamp(LocalDateTime.now())
             .build();
 		repository.save(quote).subscribe();
-        log.info("Inserting {}", quote);
         return quote;
     }
 }
