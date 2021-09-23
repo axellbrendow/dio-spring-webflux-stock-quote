@@ -37,8 +37,8 @@ public class DioStockQuoteApplication {
 	private Quote generateNewData(Quote quote) {
 		Quote quoteToSave = Quote.builder()
 			.symbol(quote.getSymbol())
-			.openValue(quote.getOpenValue() * new RandomDataGenerator().nextUniform(-0.1, 0.1))
-			.closeValue(quote.getCloseValue() * new RandomDataGenerator().nextUniform(-0.1, 0.1))
+			.openValue(quote.getOpenValue() + new RandomDataGenerator().nextUniform(-0.1, 0.1))
+			.closeValue(quote.getCloseValue() + new RandomDataGenerator().nextUniform(-0.1, 0.1))
 			.timestamp(quote.getTimestamp())
 			.build();
 		return repository.save(quoteToSave);
