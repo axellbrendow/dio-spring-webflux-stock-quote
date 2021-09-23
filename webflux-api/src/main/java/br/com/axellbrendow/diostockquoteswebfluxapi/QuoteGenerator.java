@@ -26,6 +26,11 @@ public class QuoteGenerator {
             log.info("Starting data insertion");
             return initialQuote();
         }, (state, sink) -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             sink.next(state);
             return createNewQuote(state);
         })
