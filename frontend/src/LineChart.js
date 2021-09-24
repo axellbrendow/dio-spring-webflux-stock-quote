@@ -1,42 +1,52 @@
 import { Component } from "react";
 import { CanvasJSChart } from "./assets/canvasjs.react";
+import { getLastQuote } from "./api";
 
 /** @type {import('canvasjs').ChartDataPoint[]} */
-const openValues = [
-    {
-        x: 0.222,
-        y: new Date(),
-    },
-    {
-        x: 0.221,
-        y: new Date(),
-    },
-];
+const openValues = [];
 
 /** @type {import('canvasjs').ChartDataPoint[]} */
-const closeValues = [
-    {
-        x: 0.122,
-        y: new Date(),
-    },
-    {
-        x: 0.121,
-        y: new Date(),
-    },
-];
+const closeValues = [];
 
 class LineChart extends Component {
     componentDidMount() {
-        setInterval(this.updateChart, 1000);
+        this.updateChart();
     }
 
-    updateChart = () => {
-        this.chart.render();
+    fetchData = async () => {
+        const res = await getLastQuote();
+
+        openValues.push({
+            x: new Date(res.data.timestamp),
+            y: res.data.openValue
+        });
+
+        if (openValues.length > 10) openValues.shift();
+
+        closeValues.push({
+            x: new Date(res.data.timestamp),
+            y: res.data.closeValue
+        });
+
+        if (closeValues.length > 10) closeValues.shift();
+    }
+
+    updateChart = async () => {
+        try {
+            await this.fetchData();
+        } catch (error) {
+            console.error(error);
+        }
+        if (this.chart) this.chart.render();
+        setTimeout(this.updateChart, 1000);
     }
 
     render() {
         /** @type {import('canvasjs').ChartOptions} */
         const options = {
+			animationEnabled: true,
+			exportEnabled: true,
+			theme: "light2", //"light1", "dark1", "dark2"
             title: {
                 text: "Stock Quotes",
             },
@@ -70,7 +80,7 @@ class LineChart extends Component {
 
         return (
             <div>
-                <h1>Acompanhamento das cotações</h1>
+                <h1>Monitoring of quotations</h1>
                 <CanvasJSChart options={options} onRef={ref => this.chart = ref} />
             </div>
         )
