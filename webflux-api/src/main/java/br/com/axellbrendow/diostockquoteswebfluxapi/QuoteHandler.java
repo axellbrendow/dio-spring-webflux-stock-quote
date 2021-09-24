@@ -20,4 +20,12 @@ public class QuoteHandler {
             .contentType(MediaType.APPLICATION_JSON)
             .body(quotes, Quote.class);
     }
+
+    public Mono<ServerResponse> getLastQuote(ServerRequest req) {
+        var quote = repository.findAll().last();
+        return ServerResponse
+            .ok()
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(quote, Quote.class);
+    }
 }

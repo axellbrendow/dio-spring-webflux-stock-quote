@@ -14,6 +14,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 public class WebConfig {
     @Bean
     public RouterFunction<ServerResponse> routeQuotes(QuoteHandler quoteHandler) {
-        return route(GET("/quotes"), quoteHandler::getAll);
+        return route(GET("/quotes"), quoteHandler::getAll)
+            .andRoute(GET("/quotes/last"), quoteHandler::getLastQuote);
     }
 }
